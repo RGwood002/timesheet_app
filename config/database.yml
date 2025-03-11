@@ -1,0 +1,25 @@
+default: &default
+  adapter: postgresql
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  timeout: 5000
+  encoding: unicode
+  database: jirachi
+  username: rgreenwood
+  password: rgreenwood
+  host: jaddb.cnqmc8kyatvk.us-west-1.rds.amazonaws.com
+
+
+# Store production database in the storage/ directory, which by default
+# is mounted as a persistent Docker volume in config/deploy.yml.
+development:
+  primary:
+    <<: *default
+  cache:
+    <<: *default
+    migrations_paths: db/cache_migrate
+  queue:
+    <<: *default
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *default
+    migrations_paths: db/cable_migrate
