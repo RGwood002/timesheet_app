@@ -1,15 +1,24 @@
 <h1><%= @status %></h1>
 
+<% if @status == "Clocked In" %>
+<button type="button" id="clock-in-button">Clock In</button>
+<% else %>
+<button type="button" id="clock-out-button">Clock Out</button>
+<% end %>
+
+
 <ul id="records-list">
     <% @records.each do |record| %>
         <%= render partial: "record", locals: {record: record} %>
     <% end %>
 </ul>
 
-<button type="button" id="clock-in-button">Clock In</button>
 
 <%= form_with url: clock_in_records_path, method: :post, data: {turbo_frame: "_top" }, id: "clock-in-form" do%>
 <%= submit_tag "Clock In", style: "display: none;" %>
 <% end %>
 
+<%= form_with url: clock_out_records_path, method: :post, data: {turbo_frame: "_top" }, id: "clock-out-form" do%>
+<%= submit_tag "Clock Out", style: "display: none;" %>
+<% end %>
 <%= turbo_stream_from "records" %>

@@ -60,13 +60,27 @@ class RecordsController < ApplicationController
     end
   end
 
+  def clock_out
+    @record = Record.order(created_at: :desc).first
+    @record.update(clock_out_params)
+    if @record.save
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to records_path, notice: "Clocked Out" }
+      end
+    else
+      respond_to do |format|
+        format.html { redirect_to records_path, notice: "Failed to clock out" }
+      end
+    end
+  end
+
 
   private
 
   def get_status
-    puts("get_status is hit")
     latest_record = Record.order(created_at: :desc).first
-    @status = latest_record.status
+    @status = latest_record&.display_status
   end
 
   def check_records_without_checkout
@@ -86,6 +100,14 @@ class RecordsController < ApplicationController
       check_in: Time.now,
       status: :clock_in,
       created_at: Time.now
+    }
+  end
+
+  def clock_out_params
+    {
+      status: :clocked_out,
+      check_out: Time.now,
+      updated_at: Time.now
     }
   end
 end

@@ -6,18 +6,19 @@ document.addEventListener("DOMContentLoaded", function(){
     console.log("Dom loaded")
     const clockInButton = document.getElementById("clock-in-button");
     const clockInForm = document.getElementById("clock-in-form");
-    if(clockInForm){
-        console.log("Its found")
-    } else{
-        console.log("its not found")
+    
+    const clockOutButton = document.getElementById("clock-out-button");
+    const clockOutForm = document.getElementById("clock-out-form");
+
+    if (clockInButton && clockInForm){
+        clockInButton.addEventListener("click", function(){
+        clockInForm.submit();
+        })
     }
 
-    if(clockInButton){
-        console.log("Its found")
-    } else{
-        console.log("its not found")
+    if (clockOutButton && clockOutForm){
+        clockInButton.addEventListener("click", function(){
+        clockOutForm.submit();
+        })
     }
-    clockInButton.addEventListener("click", function(){
-        clockInForm.submit();
-    })
 })
