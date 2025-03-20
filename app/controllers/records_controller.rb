@@ -55,12 +55,13 @@ class RecordsController < ApplicationController
       end
     else
       respond_to do |format|
-        redirect_to records_path, alert: "Failed to clock in..."
+        format.html { redirect_to records_path, alert: "Failed to clock in..." }
       end
     end
   end
 
   def clock_out
+    Rails.logger.info("We are clocking out")
     @record = Record.order(created_at: :desc).first
     @record.update(clock_out_params)
     if @record.save
@@ -75,12 +76,50 @@ class RecordsController < ApplicationController
     end
   end
 
+  def lunch_in
+    Rails.logger.info("Going on a Lunch Break")
+    @record = Record.order(created_at: :desc).first
+    @record.update(lunch_in_params)
+
+    if @record.save
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to records_path, notice: "Lunch Started" }
+      end
+    else
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to records_path, alert: "Failed to start lunch" }
+      end
+    end
+  end
+
+  def lunch_out
+    Rails.logger.info("Coming back from lunch")
+    @record = Record.order(created_at: :desc).first
+    @record.update(lunch_out_params)
+
+    if @record.save
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to records_path, notice: "Returned from lunch" }
+      end
+    else
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to records_path, alert: "Failed to end lunch" }
+      end
+    end
+  end
+
 
   private
 
   def get_status
     latest_record = Record.order(created_at: :desc).first
     @status = latest_record&.display_status
+    @lunch_status = latest_record&.display_lunch_status
+    @is_on_lunch = latest_record&.on_lunch?
   end
 
   def check_records_without_checkout
@@ -98,8 +137,9 @@ class RecordsController < ApplicationController
     {
       creation_date: Time.now,
       check_in: Time.now,
-      status: :clock_in,
-      created_at: Time.now
+      status: :clocked_in,
+      created_at: Time.now,
+      lunch: :off_lunch
     }
   end
 
@@ -107,7 +147,24 @@ class RecordsController < ApplicationController
     {
       status: :clocked_out,
       check_out: Time.now,
-      updated_at: Time.now
+      updated_at: Time.now,
+      lunch: :off_lunch
+    }
+  end
+
+  def lunch_in_params
+    {
+      lunch: :on_lunch,
+      updated_at: Time.now,
+      lunch_start: Time.now
+    }
+  end
+
+  def lunch_out_params
+    {
+      lunch: :off_lunch,
+      updated_at: Time.now,
+      lunch_end: Time.now
     }
   end
 end

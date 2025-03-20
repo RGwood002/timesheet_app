@@ -1,10 +1,16 @@
 <h1><%= @status %></h1>
 
 <% if @status == "Clocked In" %>
-<button type="button" id="clock-in-button">Clock In</button>
-<% else %>
 <button type="button" id="clock-out-button">Clock Out</button>
+<% else %>
+<button type="button" id="clock-in-button">Clock In</button>
 <% end %>
+
+<% if @is_on_lunch %>
+<button type="button" id="lunch-out-button">Lunch End</button>
+<%else%>
+<button type="button" id="lunch-in-button" <%= @status != "Clocked In" ? "disabled" : "" %>>Lunch Clock In</button>
+<%end%>
 
 
 <ul id="records-list">
@@ -20,5 +26,13 @@
 
 <%= form_with url: clock_out_records_path, method: :post, data: {turbo_frame: "_top" }, id: "clock-out-form" do%>
 <%= submit_tag "Clock Out", style: "display: none;" %>
+<% end %>
+
+<%= form_with url: lunch_in_records_path, method: :post, data: {turbo_frame: "_top" }, id: "lunch-in-form" do%>
+<%= submit_tag "Lunch In", style: "display: none;" %>
+<% end %>
+
+<%= form_with url: lunch_out_records_path, method: :post, data: {turbo_frame: "_top" }, id: "lunch-out-form" do%>
+<%= submit_tag "Lunch Out", style: "display: none;" %>
 <% end %>
 <%= turbo_stream_from "records" %>

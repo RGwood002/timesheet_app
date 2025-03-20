@@ -14,6 +14,8 @@ Rails.application.routes.draw do
       get "without_check_out"
       post "clock_in"
       post "clock_out"
+      post "lunch_in"
+      post "lunch_out"
     end
   end
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
